@@ -1,0 +1,28 @@
+name: Deploy to S3
+
+#define when the workflow will run
+on:
+    push:
+        branches:
+            - main
+
+#define the deployment job
+jobs:
+    deploy:
+        #specify the environment for the job to run in
+        runs-on: ubuntu-latest
+
+        #define the steps in the job
+
+        steps:
+            #checkout the code from the repository
+            name: Checkout Repository
+            uses: action/checkout@v4
+
+            #install the AWS CLI
+            name: Sync files to S3
+            run: aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }}
+            env:
+                AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                AWS_DEFAULT_REGION: us-east-1
